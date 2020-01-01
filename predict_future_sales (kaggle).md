@@ -144,51 +144,119 @@ def create_period(df):
 ```python
 # create month info 
 df_period = create_period(df)
+df_period.shape
+df_period.head()
 ```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>date_block_num</th>
+      <th>shop_id</th>
+      <th>item_id</th>
+      <th>item_price</th>
+      <th>item_cnt_day</th>
+      <th>mth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2013-01-02</td>
+      <td>0</td>
+      <td>59</td>
+      <td>22154</td>
+      <td>999.00</td>
+      <td>1.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2013-01-03</td>
+      <td>0</td>
+      <td>25</td>
+      <td>2552</td>
+      <td>899.00</td>
+      <td>1.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2013-01-05</td>
+      <td>0</td>
+      <td>25</td>
+      <td>2552</td>
+      <td>899.00</td>
+      <td>-1.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2013-01-06</td>
+      <td>0</td>
+      <td>25</td>
+      <td>2554</td>
+      <td>1709.05</td>
+      <td>1.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2013-01-15</td>
+      <td>0</td>
+      <td>25</td>
+      <td>2555</td>
+      <td>1099.00</td>
+      <td>1.0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 
 ```python
-#pivot_df = df_period.pivot_table(index = ['shop_id', 'item_id', 'item_price', 'mth'], 
 pivot_df = df_period.pivot_table(index = ['shop_id', 'item_id', 'mth'], 
-                                 values = 'item_cnt_day',
-                                 columns = 'date_block_num',
-                                 aggfunc = 'sum').fillna(0.0)
+								 values = 'item_cnt_day',
+								 columns = 'date_block_num',
+								 aggfunc = 'sum').fillna(0.0).reset_index()
 
-# with 'item_price' included, the RMSE is 0.6640
-# 'item_price' NOT included, the RMSE is 1.10577
+pivot_df = pivot_df.groupby(['shop_id','item_id']).max().reset_index() ###
+pivot_df.head()
 
+pivot_df.shape
 df2 = pivot_df.reset_index()
-print(df2.head())
+df2.head()
+df2.shape
 ```
 
-    date_block_num  shop_id  item_id  mth    0     1    2    3    4    5    6  \
-    0                     0       30    2  0.0  31.0  0.0  0.0  0.0  0.0  0.0   
-    1                     0       31    2  0.0  11.0  0.0  0.0  0.0  0.0  0.0   
-    2                     0       32    1  6.0   0.0  0.0  0.0  0.0  0.0  0.0   
-    3                     0       32    2  0.0  10.0  0.0  0.0  0.0  0.0  0.0   
-    4                     0       33    1  3.0   0.0  0.0  0.0  0.0  0.0  0.0   
-    
-    date_block_num    7    8    9   10   11   12   13   14   15   16   17   18  \
-    0               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    1               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    2               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    3               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    4               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    
-    date_block_num   19   20   21   22   23   24   25   26   27   28   29   30  \
-    0               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    1               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    2               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    3               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    4               0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    
-    date_block_num   31   32   33  
-    0               0.0  0.0  0.0  
-    1               0.0  0.0  0.0  
-    2               0.0  0.0  0.0  
-    3               0.0  0.0  0.0  
-    4               0.0  0.0  0.0  
-    
+
+
+
+    (424124, 38)
+
+
 
 
 ```python
@@ -196,37 +264,16 @@ print(df2.head())
 df3 = pd.merge(df2, items, how = "inner", on = "item_id")
 df4 = pd.merge(df3, item_cat, how = "inner", on = "item_category_id")
 df5 = pd.merge(df4, shops, how = "inner", on = "shop_id")
-print(df5.head())
+df5.head()
+df5.shape
 ```
 
-       shop_id  item_id  mth    0     1    2    3    4    5    6    7    8    9  \
-    0        0       30    2  0.0  31.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    1        0       32    1  6.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    2        0       32    2  0.0  10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    3        0       35    1  1.0   0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    4        0       35    2  0.0  14.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    
-        10   11   12   13   14   15   16   17   18   19   20   21   22   23   24  \
-    0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    
-        25   26   27   28   29   30   31   32   33                   item_name  \
-    0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  007: КООРДИНАТЫ «СКАЙФОЛЛ»   
-    1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0                         1+1   
-    2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0                         1+1   
-    3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0               10 ЛЕТ СПУСТЯ   
-    4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0               10 ЛЕТ СПУСТЯ   
-    
-       item_category_id item_category_name                      shop_name  
-    0                40         Кино - DVD  !Якутск Орджоникидзе, 56 фран  
-    1                40         Кино - DVD  !Якутск Орджоникидзе, 56 фран  
-    2                40         Кино - DVD  !Якутск Орджоникидзе, 56 фран  
-    3                40         Кино - DVD  !Якутск Орджоникидзе, 56 фран  
-    4                40         Кино - DVD  !Якутск Орджоникидзе, 56 фран  
-    
+
+
+
+    (424124, 42)
+
+
 
 
 ```python
@@ -236,6 +283,7 @@ df5.isna().sum() # there are no NAs
 
 
 
+    index                 0
     shop_id               0
     item_id               0
     mth                   0
@@ -284,91 +332,360 @@ df5.isna().sum() # there are no NAs
 
 ```python
 # we change the order of the columns
-col_order = [0,1,38,2,37,39,40] + list(range(3,37))
-df5 = df5.iloc[:,col_order]
-print(df5.head())
+[(i, df5.columns[i]) for i in range(len(df5.columns))]
+col_order = [0,1,41,2,38,39,40,3] + list(range(4,38))
+df6 = df5.iloc[:,col_order]
+df6.head()
 ```
 
-       shop_id  item_id  item_category_id  mth                   item_name  \
-    0        0       30                40    2  007: КООРДИНАТЫ «СКАЙФОЛЛ»   
-    1        0       32                40    1                         1+1   
-    2        0       32                40    2                         1+1   
-    3        0       35                40    1               10 ЛЕТ СПУСТЯ   
-    4        0       35                40    2               10 ЛЕТ СПУСТЯ   
-    
-      item_category_name                      shop_name    0     1    2    3    4  \
-    0         Кино - DVD  !Якутск Орджоникидзе, 56 фран  0.0  31.0  0.0  0.0  0.0   
-    1         Кино - DVD  !Якутск Орджоникидзе, 56 фран  6.0   0.0  0.0  0.0  0.0   
-    2         Кино - DVD  !Якутск Орджоникидзе, 56 фран  0.0  10.0  0.0  0.0  0.0   
-    3         Кино - DVD  !Якутск Орджоникидзе, 56 фран  1.0   0.0  0.0  0.0  0.0   
-    4         Кино - DVD  !Якутск Орджоникидзе, 56 фран  0.0  14.0  0.0  0.0  0.0   
-    
-         5    6    7    8    9   10   11   12   13   14   15   16   17   18   19  \
-    0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
-    
-        20   21   22   23   24   25   26   27   28   29   30   31   32   33  
-    0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
-    1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
-    2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
-    3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
-    4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
-    
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>shop_id</th>
+      <th>shop_name</th>
+      <th>item_id</th>
+      <th>item_name</th>
+      <th>item_category_id</th>
+      <th>item_category_name</th>
+      <th>mth</th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>10</th>
+      <th>11</th>
+      <th>12</th>
+      <th>13</th>
+      <th>14</th>
+      <th>15</th>
+      <th>16</th>
+      <th>17</th>
+      <th>18</th>
+      <th>19</th>
+      <th>20</th>
+      <th>21</th>
+      <th>22</th>
+      <th>23</th>
+      <th>24</th>
+      <th>25</th>
+      <th>26</th>
+      <th>27</th>
+      <th>28</th>
+      <th>29</th>
+      <th>30</th>
+      <th>31</th>
+      <th>32</th>
+      <th>33</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>!Якутск Орджоникидзе, 56 фран</td>
+      <td>30</td>
+      <td>007: КООРДИНАТЫ «СКАЙФОЛЛ»</td>
+      <td>40</td>
+      <td>Кино - DVD</td>
+      <td>2</td>
+      <td>0.0</td>
+      <td>31.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>0</td>
+      <td>!Якутск Орджоникидзе, 56 фран</td>
+      <td>32</td>
+      <td>1+1</td>
+      <td>40</td>
+      <td>Кино - DVD</td>
+      <td>2</td>
+      <td>6.0</td>
+      <td>10.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>0</td>
+      <td>!Якутск Орджоникидзе, 56 фран</td>
+      <td>35</td>
+      <td>10 ЛЕТ СПУСТЯ</td>
+      <td>40</td>
+      <td>Кино - DVD</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>14.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>8</td>
+      <td>0</td>
+      <td>!Якутск Орджоникидзе, 56 фран</td>
+      <td>43</td>
+      <td>100 МИЛЛИОНОВ ЕВРО</td>
+      <td>40</td>
+      <td>Кино - DVD</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>14</td>
+      <td>0</td>
+      <td>!Якутск Орджоникидзе, 56 фран</td>
+      <td>75</td>
+      <td>12 ДРУЗЕЙ ОУШЕНА WB (регион)</td>
+      <td>40</td>
+      <td>Кино - DVD</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 
 ```python
 ###   create some visualisations
-df5.hist()
+df6.hist()
 ```
 
 
 
 
-    array([[<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BEAA80198>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BDF4BF8D0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BEAA81D30>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BEAABD160>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4D1E710>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4D50CC0>],
-           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4DEC2B0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB649C898>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB649C8D0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB650A400>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB653B9B0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB656DF60>],
-           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB65A9550>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB65D8B00>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB66170F0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB66456A0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6676C50>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB66B4240>],
-           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB66E37F0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6717DA0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6752390>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6784940>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB67B4EF0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB67F14E0>],
-           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6822A90>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6860080>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB688E630>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB68C0BE0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB68FE1D0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB692E780>],
-           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6960D30>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB699C320>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB69CC8D0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB69FEE80>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6A3B470>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6A68A20>],
-           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6A9DFD0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6AD85C0>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6B08B70>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6B46160>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6B75710>,
-            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6BA6CC0>]],
+    array([[<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BDDD70860>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BDDCD6BA8>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4EE80F0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BE32064E0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3D10A90>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3F55080>],
+           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3F78630>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4E73C18>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4E73C50>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3F15780>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3E96D30>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3E53320>],
+           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4E418D0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3DAEE80>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3D74470>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3DFAA20>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3EA4FD0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB3D5C5C0>],
+           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024CB662B4A8>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4234160>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4263710>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4296CC0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB42D42B0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4302860>],
+           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4336E10>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4373400>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB43A39B0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4AA7F60>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4AE3550>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4B15B00>],
+           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4B530F0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4B846A0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4BB4C50>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4BF2240>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4C227F0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4C55DA0>],
+           [<matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB4C92390>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB62E2940>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6315EF0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB63524E0>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB6382A90>,
+            <matplotlib.axes._subplots.AxesSubplot object at 0x0000024BB63C0080>]],
           dtype=object)
 
 
@@ -386,14 +703,11 @@ df5.hist()
 # using all data to predict 'item_price' given that 'date_block_num' is 34
 # we insert the price info as a row, mth as 11, 
 # then use the predicted item price to predict the item count for the month
-
-X = df5.loc[:,df5.columns != 33]
-X.head()
-
+X = df6.loc[:,df6.columns != 33]
 X = X.drop(['item_name', 'item_category_name', 'shop_name'], axis = 1)
-X.head()
 y = df5.loc[:,df5.columns == 33]
-y.head()
+print(X.head())
+print(y.head())
 
 # create an XGBoost model
 import xgboost as xgb
@@ -401,7 +715,7 @@ data_dmatrix = xgb.DMatrix(data = X, label = y)
 
 # do a train_test_split
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X,y)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.2, random_state = 0)
 xg_reg = xgb.XGBRegressor(num_round = 1000, 
                           verbosity = 0, # silent all warning messages                          
                           eval_metric = 'rmse',                          
@@ -414,6 +728,34 @@ xg_reg = xgb.XGBRegressor(num_round = 1000,
 
 xg_reg.fit(X_train, y_train)
 ```
+
+       index  shop_id  item_id  item_category_id  mth    0     1    2    3    4  \
+    0      0        0       30                40    2  0.0  31.0  0.0  0.0  0.0   
+    1      2        0       32                40    2  6.0  10.0  0.0  0.0  0.0   
+    2      4        0       35                40    2  1.0  14.0  0.0  0.0  0.0   
+    3      8        0       43                40    1  1.0   0.0  0.0  0.0  0.0   
+    4     14        0       75                40    1  1.0   0.0  0.0  0.0  0.0   
+    
+         5    6    7    8    9   10   11   12   13   14   15   16   17   18   19  \
+    0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
+    1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
+    2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
+    3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
+    4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0   
+    
+        20   21   22   23   24   25   26   27   28   29   30   31   32  
+    0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
+    1  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
+    2  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
+    3  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
+    4  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  
+        33
+    0  0.0
+    1  0.0
+    2  0.0
+    3  0.0
+    4  0.0
+    
 
 
 
@@ -435,8 +777,8 @@ y_preds = xg_reg.predict(X_test)
 print(y_preds)
 ```
 
-    [ 0.01201862  0.00027925 -0.00127155 ...  0.00253576 -0.00033885
-     -0.00023341]
+    [-0.01624572  0.0297519  -0.00831491 ...  1.6636343  -0.00496095
+     -0.00663596]
     
 
 
@@ -447,7 +789,7 @@ rmse = np.sqrt(mean_squared_error(y_test, pd.DataFrame(y_preds)))
 print(rmse)
 ```
 
-    0.7231264684042464
+    2.001824470229297
     
 
 
@@ -455,36 +797,41 @@ print(rmse)
 ###############################################################################
 ###   do the final prediction
 ###############################################################################
-# we merged the usual dataframe with the 'sales_test' dataframe
-test_df = df5.merge(sales_test, how = 'inner', on = ['shop_id', 'item_id']).fillna(0.0)
-test_df = test_df.drop(['item_name', 'item_category_name', 'shop_name'], axis = 1)
-test_df = test_df.iloc[:,test_df.columns != 'ID']
 
-# previously we fitted the model without one column, Now we want to predict the 34th column, 
-# so we move one month forward i.e. from 1 to 33 (by renaming the column names)
-dic_names = dict(zip(test_df.columns[4:], list(np.array(list(test_df.columns[4:])) - 1)))
+# this is based on the merged data with the 'sales_test' dataframe
+test_df = sales_test.merge(df6, how = 'left', on = ['shop_id', 'item_id']).fillna(0.0)
+
+# reorder the columns again, and dropping less important columns
+[(i,test_df.columns[i]) for i in range(len(test_df.columns))]
+col_order_test = [3,1,2,6,8] + list(range(9,43))
+test_df = test_df.iloc[:,col_order_test]
+
+# previously we fitted the model without one column, 
+# so, now we want to predict the 34th column, so we move one month forward
+# i.e. from 1 to 33 (including renaming the column names)
+dic_names = dict(zip(test_df.columns[5:], list(np.array(list(test_df.columns[5:])) - 1)))
 test_df = test_df.rename(dic_names, axis = 1)
 
-# the final prediction
 test_df_select = test_df.iloc[:,test_df.columns != -1]
+test_df_select.head()
+
+# the final prediction
 y_preds_test = xg_reg.predict(test_df_select)
-results = pd.DataFrame(y_preds_test)
 ```
 
 
 ```python
-# read the data into submission file
-sub = pd.read_csv('the_submission.csv')
-sub.head()
+# we clip the predictions to a range between 0 to 20
+clipped_preds = list(map(lambda x: min(20, max(x,0)), list(y_preds_test)))
+results = pd.DataFrame({'ID': test_df.index, 'item_cnt_month': clipped_preds})
 
-new_sub = sub.copy()
-new_sub.item_cnt_month = results
-new_sub.tail()
-
-new_sub.to_csv('try.csv')
+results.head(20)
+results.shape
 ```
 
 
 ```python
-
+# read into the submission file
+results.describe()
+results.to_csv('try.csv')
 ```
